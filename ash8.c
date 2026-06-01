@@ -15,7 +15,9 @@ typedef struct{
 	int x;
 	int y;
 	int a;
-	int addr; //adding the address register to access more locations on ram
+	int addr;
+
+	bool zero;
 	
 	int pc;
 	bool halted;
@@ -120,6 +122,12 @@ void cpu_step(CPU *cpu, uint8_t rom[] , uint8_t ram[], Keyboard *keyboard)
         cpu->halted = true;
     }
 
+    if (cpu->a == 0){
+    	cpu->zero = true;
+    } else{
+    	cpu->zero = false;
+    }
+
     cpu->pc++;
 }
 
@@ -188,14 +196,15 @@ int main(void)
         snprintf(
         	title,
         	sizeof(title),
-        	"ASH-8  KEY=%d  A=%d  ADDR=%d  RAM[ADDR]=%d  X=%d  Y=%d  PC=%d",
+        	"ASH-8  KEY=%d  A=%d  ADDR=%d  RAM[ADDR]=%d  X=%d  Y=%d  PC=%d , ZERO=%d",
         	keyboard.key,
         	cpu.a,
         	cpu.addr,
         	ram[cpu.addr],
         	cpu.x,
         	cpu.y,
-        	cpu.pc
+        	cpu.pc,
+        	cpu.zero
         );
 
         SDL_SetWindowTitle(window, title);

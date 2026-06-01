@@ -8,6 +8,7 @@
 
 typedef struct{
 	int x;
+	int y; //adding a new register to our cpu 
 	int pc;
 	bool halted;
 } CPU;
@@ -26,7 +27,15 @@ int main(void)
     	rom[i]  = 2; 
      }
 
-    rom[20] = 3;
+     for (int i = 20; i < 30; i++){
+     	rom[i] = 2;
+     }
+
+     for (int i = 30; i < 40; i++){
+     	rom[i] = 5;
+     }
+
+    rom[40] = 3;
 
     
 
@@ -66,7 +75,7 @@ int main(void)
 
         // Write into screen memory
         for (int i = 0; i < 20; i++) {
-            screen[500 + cpu.x + i] = 'A';
+            screen[(12 + cpu.y) * COLS + cpu.x + i] = 'A';
         }
 
        if (!cpu.halted){
@@ -87,6 +96,14 @@ int main(void)
 
        	    if (instruction == 3){
        	    	cpu.pc = -1;
+       	    }
+
+       	    if (instruction == 4){
+       	    	cpu.y++;
+       	    }
+
+       	    if (instruction == 5){
+       	    	cpu.y--;
        	    }
 
        	    cpu.pc++;

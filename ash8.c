@@ -13,6 +13,41 @@ typedef struct{
 	bool halted;
 } CPU;
 
+void cpu_step(CPU *cpu, uint8_t rom[])
+{
+    if (cpu->halted) {
+        return;
+    }
+
+    uint8_t instruction = rom[cpu->pc];
+
+    if (instruction == 1) {
+        cpu->x++;
+    }
+
+    if (instruction == 2) {
+        cpu->x--;
+    }
+
+    if (instruction == 3) {
+        cpu->pc = -1;
+    }
+
+    if (instruction == 4) {
+        cpu->y++;
+    }
+
+    if (instruction == 5) {
+        cpu->y--;
+    }
+
+    if (instruction == 0) {
+        cpu->halted = true;
+    }
+
+    cpu->pc++;
+}
+
 
 int main(void)
 {
@@ -78,36 +113,7 @@ int main(void)
             screen[(12 + cpu.y) * COLS + cpu.x + i] = 'A';
         }
 
-       if (!cpu.halted){
-
-       	    uint8_t instruction = rom[cpu.pc];
-
-       	    if (instruction == 1){
-       	    	cpu.x++;
-       	    }
-
-       	    if (instruction == 0){
-       	    	cpu.halted = true;
-       	    }
-
-       	    if (instruction == 2){
-       	    	cpu.x--;
-       	    }
-
-       	    if (instruction == 3){
-       	    	cpu.pc = -1;
-       	    }
-
-       	    if (instruction == 4){
-       	    	cpu.y++;
-       	    }
-
-       	    if (instruction == 5){
-       	    	cpu.y--;
-       	    }
-
-       	    cpu.pc++;
-       }
+        cpu_step(&cpu, rom);
 
         if (cpu.x > 20) {
             cpu.x = 0;

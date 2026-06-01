@@ -9,6 +9,11 @@
 
 int main(void)
 {
-	printf("ASH-8 power on\n");
-	return 0;
+	uint8_t screen[COLS * ROWS] = {0};
+
+	screen[0] = 'A';
+
+	printf("screen[0] contain: %c\n", screen[0]);
+
+	return 0 ;
 }

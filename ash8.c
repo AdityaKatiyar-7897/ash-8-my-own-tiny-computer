@@ -13,6 +13,14 @@ typedef struct{
 	bool halted;
 } CPU;
 
+void draw_line(uint8_t screen[], CPU *cpu)
+{
+	for(int i = 0; i < 20 ; i++){
+		screen[(12 + cpu->y) * COLS +cpu->x + i] = 'A';
+	}
+}
+
+
 void cpu_step(CPU *cpu, uint8_t rom[])
 {
     if (cpu->halted) {
@@ -59,7 +67,7 @@ int main(void)
     }
 
     for (int i = 10; i < 20; i++){
-    	rom[i]  = 2; 
+    	rom[i]  = 4; 
      }
 
      for (int i = 20; i < 30; i++){
@@ -108,10 +116,8 @@ int main(void)
             screen[i] = 0;
         }
 
-        // Write into screen memory
-        for (int i = 0; i < 20; i++) {
-            screen[(12 + cpu.y) * COLS + cpu.x + i] = 'A';
-        }
+        draw_line(screen, &cpu);
+        
 
         cpu_step(&cpu, rom);
 

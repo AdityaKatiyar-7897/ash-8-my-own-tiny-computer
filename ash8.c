@@ -10,7 +10,9 @@
 typedef struct{
 	int x;
 	int y;
-	int a; //another new register (general purpose)
+	int a;
+	int addr; //adding the address register to access more locations on ram
+	
 	int pc;
 	bool halted;
 } CPU;
@@ -76,6 +78,16 @@ void cpu_step(CPU *cpu, uint8_t rom[] , uint8_t ram[])
     	ram[0] = cpu->a;
     }
 
+    if (instruction == 9){
+
+        cpu->a = ram[0];
+    	
+    }
+
+    if(instruction == 10){
+    	cpu ->addr++;
+    }
+
     if (instruction == 0) {
         cpu->halted = true;
     }
@@ -90,12 +102,11 @@ int main(void)
     uint8_t rom[256] = {0};
     uint8_t ram[256] = {0};
 
-   rom[0] = 6;
-   rom[1] = 6;
-   rom[2] = 6;
-   rom[3] = 8;
-   rom[4] = 3;
-
+   rom[0] = 10;
+rom[1] = 10;
+rom[2] = 10;
+rom[3] = 10;
+rom[4] = 3;
     
 
     SDL_Init(SDL_INIT_VIDEO);
@@ -142,8 +153,9 @@ int main(void)
         snprintf(
         	title,
         	sizeof(title),
-        	"ASH-8  A=%d  RAM0=%d  X=%d  Y=%d  PC=%d",
+        	"ASH-8  A=%d  ADDR=%D RAM0=%d  X=%d  Y=%d  PC=%d",
         	cpu.a,
+        	cpu.addr,
         	ram[0],
         	cpu.x,
         	cpu.y,

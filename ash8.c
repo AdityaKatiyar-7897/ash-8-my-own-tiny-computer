@@ -36,7 +36,7 @@ void video_step(uint8_t screen[], CPU *cpu, uint8_t ram[])
 	}
 
 	for (int i = 0; i < length; i++){
-		screen[(12 + cpu->y) * COLS + cpu->x + i] = 'A';
+		screen[(12 + ram[2]) * COLS + ram[1] + i] = 'A';
 	}
 	}
 
@@ -135,7 +135,7 @@ void cpu_step(CPU *cpu, uint8_t rom[] , uint8_t ram[], Keyboard *keyboard)
     }
 
     if (instruction == 17){
-    	cpu->zero = (cpu-> == 0);
+    	cpu->zero = (cpu->a == 0);
     }
 
     if (instruction == 0) {
@@ -155,7 +155,7 @@ int main(void)
     uint8_t ram[256] = {0};
     Keyboard keyboard = {0};
 
-rrom[0] = 7;    // DEC_A
+rom[0] = 7;    // DEC_A
 rom[1] = 17;   // COMPARE A WITH ZERO
 
 rom[2] = 16;   // JUMP_IF_ZERO

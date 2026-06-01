@@ -72,6 +72,10 @@ void cpu_step(CPU *cpu, uint8_t rom[] , uint8_t ram[])
     	cpu->a--;
     }
 
+    if (instruction == 8){
+    	ram[0] = cpu->a;
+    }
+
     if (instruction == 0) {
         cpu->halted = true;
     }
@@ -86,13 +90,11 @@ int main(void)
     uint8_t rom[256] = {0};
     uint8_t ram[256] = {0};
 
-   rom[0] = 1; // right
-   rom[1] = 4; // down
-   rom[2] = 6; // A++
-   rom[3] = 1; // right
-   rom[4] = 4; // down
-   rom[5] = 7; // A--
-   rom[6] = 3; // jump
+   rom[0] = 6;
+   rom[1] = 6;
+   rom[2] = 6;
+   rom[3] = 8;
+   rom[4] = 3;
 
     
 
@@ -140,8 +142,9 @@ int main(void)
         snprintf(
         	title,
         	sizeof(title),
-        	"ASH-8  A=%d  X=%d  Y=%d  PC=%d",
+        	"ASH-8  A=%d  RAM0=%d  X=%d  Y=%d  PC=%d",
         	cpu.a,
+        	ram[0],
         	cpu.x,
         	cpu.y,
         	cpu.pc

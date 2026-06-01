@@ -34,7 +34,7 @@ void video_step(uint8_t screen[], CPU *cpu)
 
 
 
-void cpu_step(CPU *cpu, uint8_t rom[])
+void cpu_step(CPU *cpu, uint8_t rom[] , uint8_t ram[])
 {
     if (cpu->halted) {
         return;
@@ -84,13 +84,15 @@ int main(void)
 {
     uint8_t screen[COLS * ROWS] = {0};
     uint8_t rom[256] = {0};
+    uint8_t ram[256] = {0};
 
-    rom[0] = 6;
-    rom[1] = 6;
-    rom[2] = 6;
-    rom[3] = 7;
-    rom[4] = 7;
-    rom[5] = 3;
+   rom[0] = 1; // right
+   rom[1] = 4; // down
+   rom[2] = 6; // A++
+   rom[3] = 1; // right
+   rom[4] = 4; // down
+   rom[5] = 7; // A--
+   rom[6] = 3; // jump
 
     
 
@@ -131,7 +133,7 @@ int main(void)
         video_step(screen, &cpu);
         
 
-        cpu_step(&cpu, rom);
+        cpu_step(&cpu, rom, ram);
 
         char title[128];
 

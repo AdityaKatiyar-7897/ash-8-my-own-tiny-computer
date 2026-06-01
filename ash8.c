@@ -11,11 +11,10 @@ int main(void)
 {
     uint8_t screen[COLS * ROWS] = {0};
 
-    screen[500] = 'A';
-    screen[501] = 'A';
-    screen[502] = 'A';
-    screen[503] = 'A';
-    screen[504] = 'A';
+    
+   for (int i = 0; i < 20; i++) {
+    screen[500 + i] = 'A';
+}
 
     SDL_Init(SDL_INIT_VIDEO);
 

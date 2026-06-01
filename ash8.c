@@ -8,6 +8,10 @@
 #define SCALE 16
 
 typedef struct{
+	uint8_t key;
+} Keyboard;
+
+typedef struct{
 	int x;
 	int y;
 	int a;
@@ -101,23 +105,22 @@ int main(void)
     uint8_t screen[COLS * ROWS] = {0};
     uint8_t rom[256] = {0};
     uint8_t ram[256] = {0};
+    Keyboard keyboard = {0};
 
-   rom[0] = 6;   // A=1
-   rom[1] = 8;   // RAM[ADDR]=A
+  rom[0] = 6;   // A++
+   rom[1] = 8;   // STORE
    
-   rom[2] = 6;   // A=2
-   rom[3] = 8;   // RAM[ADDR]=A
+   rom[2] = 10;  // ADDR++
    
-   rom[4] = 6;   // A=3
-   rom[5] = 8;   // RAM[ADDR]=A
+   rom[3] = 6;   // A++
+   rom[4] = 8;   // STORE
    
-   rom[6] = 6;   // A=4
-   rom[7] = 8;   // RAM[ADDR]=A
+   rom[5] = 10;  // ADDR++
    
-   rom[8] = 6;   // A=5
-   rom[9] = 8;   // RAM[ADDR]=A
+   rom[6] = 6;   // A++
+   rom[7] = 8;   // STORE
    
-   rom[10] = 3;  // loop
+   rom[8] = 3;   // LOOP
     
 
     SDL_Init(SDL_INIT_VIDEO);
@@ -146,6 +149,10 @@ int main(void)
         while (SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
                 running = false;
+            }
+
+            if (e.type == SDL_KEYDOWN){
+            	keyboard.key = 1;
             }
         }
 

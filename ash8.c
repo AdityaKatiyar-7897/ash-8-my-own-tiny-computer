@@ -17,9 +17,9 @@ typedef struct{
 	bool halted;
 } CPU;
 
-void video_step(uint8_t screen[], CPU *cpu)
+void video_step(uint8_t screen[], CPU *cpu, uint8_t ram[])
 {
-	int length = cpu->a;
+	int length = ram[0];
 
 	if (length < 1){
 		length = 1;
@@ -75,12 +75,12 @@ void cpu_step(CPU *cpu, uint8_t rom[] , uint8_t ram[])
     }
 
     if (instruction == 8){
-    	ram[0] = cpu->a;
+    	ram[cpu->addr] = cpu->a;
     }
 
     if (instruction == 9){
 
-        cpu->a = ram[0];
+        cpu->a = ram[cpu->addr];
     	
     }
 
@@ -102,11 +102,22 @@ int main(void)
     uint8_t rom[256] = {0};
     uint8_t ram[256] = {0};
 
-   rom[0] = 10;
-rom[1] = 10;
-rom[2] = 10;
-rom[3] = 10;
-rom[4] = 3;
+   rom[0] = 6;   // A=1
+   rom[1] = 8;   // RAM[ADDR]=A
+   
+   rom[2] = 6;   // A=2
+   rom[3] = 8;   // RAM[ADDR]=A
+   
+   rom[4] = 6;   // A=3
+   rom[5] = 8;   // RAM[ADDR]=A
+   
+   rom[6] = 6;   // A=4
+   rom[7] = 8;   // RAM[ADDR]=A
+   
+   rom[8] = 6;   // A=5
+   rom[9] = 8;   // RAM[ADDR]=A
+   
+   rom[10] = 3;  // loop
     
 
     SDL_Init(SDL_INIT_VIDEO);
@@ -143,7 +154,7 @@ rom[4] = 3;
             screen[i] = 0;
         }
 
-        video_step(screen, &cpu);
+        video_step(screen, &cpu, ram);
         
 
         cpu_step(&cpu, rom, ram);
@@ -153,10 +164,10 @@ rom[4] = 3;
         snprintf(
         	title,
         	sizeof(title),
-        	"ASH-8  A=%d  ADDR=%D RAM0=%d  X=%d  Y=%d  PC=%d",
+        	"ASH-8  A=%d  ADDR=%d  RAM[ADDR]=%d  X=%d  Y=%d  PC=%d",
         	cpu.a,
         	cpu.addr,
-        	ram[0],
+        	ram[cpu.addr],
         	cpu.x,
         	cpu.y,
         	cpu.pc

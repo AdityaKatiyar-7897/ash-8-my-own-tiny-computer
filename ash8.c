@@ -9,6 +9,7 @@
 typedef struct{
 	int x;
 	int pc;
+	bool halted;
 } CPU;
 
 
@@ -17,11 +18,15 @@ int main(void)
     uint8_t screen[COLS * ROWS] = {0};
     uint8_t rom[256] = {0};
 
-    for (int i = 0 ; i <20 ; i++){
+    for (int i = 0 ; i <10 ; i++){
     	rom[i] = 1;
     }
 
-    rom[0] = 1;
+    for (int i = 10; i < 20; i++){
+    	rom[i]  = 2; 
+     }
+
+    
 
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -62,13 +67,24 @@ int main(void)
             screen[500 + cpu.x + i] = 'A';
         }
 
-       uint8_t instruction = rom[cpu.pc];
+       if (!cpu.halted){
 
-       if (instruction == 1){
-       	cpu.x++;
+       	    uint8_t instruction = rom[cpu.pc];
+
+       	    if (instruction == 1){
+       	    	cpu.x++;
+       	    }
+
+       	    if (instruction == 0){
+       	    	cpu.halted = true;
+       	    }
+
+       	    if (instruction == 2){
+       	    	cpu.x--;
+       	    }
+
+       	    cpu.pc++;
        }
-
-       cpu.pc++;
 
         if (cpu.x > 20) {
             cpu.x = 0;

@@ -40,13 +40,17 @@ void video_step(uint8_t screen[], CPU *cpu, uint8_t ram[])
 
 
 
-void cpu_step(CPU *cpu, uint8_t rom[] , uint8_t ram[])
+void cpu_step(CPU *cpu, uint8_t rom[] , uint8_t ram[], Keyboard *keyboard)
 {
     if (cpu->halted) {
         return;
     }
 
     uint8_t instruction = rom[cpu->pc];
+
+    if (keyboard->key != 0) {
+        cpu->a = keyboard->key;
+    }
 
     if (instruction == 1) {
         cpu->a++;
@@ -152,7 +156,11 @@ int main(void)
             }
 
             if (e.type == SDL_KEYDOWN){
-            	keyboard.key = 1;
+            	keyboard.key = e.key.keysym.sym;
+            }
+
+            if (e.type == SDL_KEYUP) {
+            	keyboard.key = 0;
             }
         }
 
@@ -164,14 +172,15 @@ int main(void)
         video_step(screen, &cpu, ram);
         
 
-        cpu_step(&cpu, rom, ram);
+        cpu_step(&cpu, rom, ram, &keyboard);
 
         char title[128];
 
         snprintf(
         	title,
         	sizeof(title),
-        	"ASH-8  A=%d  ADDR=%d  RAM[ADDR]=%d  X=%d  Y=%d  PC=%d",
+        	"ASH-8  KEY=%d  A=%d  ADDR=%d  RAM[ADDR]=%d  X=%d  Y=%d  PC=%d",
+        	keyboard.key,
         	cpu.a,
         	cpu.addr,
         	ram[cpu.addr],

@@ -26,6 +26,8 @@ int main(void)
     	rom[i]  = 2; 
      }
 
+    rom[20] = 3;
+
     
 
     SDL_Init(SDL_INIT_VIDEO);
@@ -81,6 +83,10 @@ int main(void)
 
        	    if (instruction == 2){
        	    	cpu.x--;
+       	    }
+
+       	    if (instruction == 3){
+       	    	cpu.pc = -1;
        	    }
 
        	    cpu.pc++;

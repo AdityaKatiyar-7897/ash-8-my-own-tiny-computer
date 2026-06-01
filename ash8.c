@@ -11,7 +11,7 @@ int main(void)
 {
     uint8_t screen[COLS * ROWS] = {0};
 
-    screen[0] = 'A';
+    screen[500] = 'A';
 
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -29,23 +29,33 @@ int main(void)
     bool running = true;
     SDL_Event e;
 
-    while (running) {
-        while (SDL_PollEvent(&e)) {
-            if (e.type == SDL_QUIT) running = false;
-        }
-
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
-
-        if (screen[0] == 'A') {
-            SDL_Rect r = {0, 0, SCALE, SCALE};
-            SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-            SDL_RenderFillRect(renderer, &r);
-        }
-
-        SDL_RenderPresent(renderer);
-    }
-
+   while (running) {
+       while (SDL_PollEvent(&e)) {
+           if (e.type == SDL_QUIT) running = false;
+       }
+   
+       SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+       SDL_RenderClear(renderer);
+   
+       for (int i = 0; i < COLS * ROWS; i++) {
+           if (screen[i] == 'A') {
+               int col = i % COLS;
+               int row = i / COLS;
+   
+               SDL_Rect r = {
+                   col * SCALE,
+                   row * SCALE,
+                   SCALE,
+                   SCALE
+               };
+   
+               SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+               SDL_RenderFillRect(renderer, &r);
+           }
+       }
+   
+       SDL_RenderPresent(renderer);
+   }
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();

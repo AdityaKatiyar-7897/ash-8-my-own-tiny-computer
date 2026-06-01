@@ -48,9 +48,7 @@ void cpu_step(CPU *cpu, uint8_t rom[] , uint8_t ram[], Keyboard *keyboard)
 
     uint8_t instruction = rom[cpu->pc];
 
-    if (keyboard->key != 0) {
-        cpu->a = keyboard->key;
-    }
+    
 
     if (instruction == 1) {
         cpu->a++;
@@ -96,6 +94,28 @@ void cpu_step(CPU *cpu, uint8_t rom[] , uint8_t ram[], Keyboard *keyboard)
     	cpu ->addr++;
     }
 
+    if (instruction == 12){
+    	cpu->a = keyboard->key;
+    }
+
+    if (instruction == 13){
+    	if (cpu->a == 'a'){
+    		cpu->x--;
+    	}
+
+    	if (cpu->a == 'd'){
+    		cpu->x++;
+    	}
+
+    	if (cpu->a == 'w'){
+    		cpu->y--;
+    	}
+
+    	if (cpu->a == 's'){
+    		cpu->y++;
+    	}
+    }
+
     if (instruction == 0) {
         cpu->halted = true;
     }
@@ -111,20 +131,9 @@ int main(void)
     uint8_t ram[256] = {0};
     Keyboard keyboard = {0};
 
-  rom[0] = 6;   // A++
-   rom[1] = 8;   // STORE
-   
-   rom[2] = 10;  // ADDR++
-   
-   rom[3] = 6;   // A++
-   rom[4] = 8;   // STORE
-   
-   rom[5] = 10;  // ADDR++
-   
-   rom[6] = 6;   // A++
-   rom[7] = 8;   // STORE
-   
-   rom[8] = 3;   // LOOP
+ rom[0] = 12; // READ_KEYBOARD
+  rom[1] = 13; // USE_KEYBOARD
+  rom[2] = 3;  // LOOP
     
 
     SDL_Init(SDL_INIT_VIDEO);

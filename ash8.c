@@ -134,15 +134,15 @@ void cpu_step(CPU *cpu, uint8_t rom[] , uint8_t ram[], Keyboard *keyboard)
     	}
     }
 
+    if (instruction == 17){
+    	cpu->zero = (cpu-> == 0);
+    }
+
     if (instruction == 0) {
         cpu->halted = true;
     }
 
-    if (cpu->a == 0){
-    	cpu->zero = true;
-    } else{
-    	cpu->zero = false;
-    }
+    
 
     cpu->pc++;
 }
@@ -155,16 +155,18 @@ int main(void)
     uint8_t ram[256] = {0};
     Keyboard keyboard = {0};
 
-rom[0] = 7;    // DEC_A
-rom[1] = 16;   // JUMP_IF_ZERO
-rom[2] = 5;    // destination
+rrom[0] = 7;    // DEC_A
+rom[1] = 17;   // COMPARE A WITH ZERO
 
-rom[3] = 15;   // JUMP
-rom[4] = 0;    // back to start
+rom[2] = 16;   // JUMP_IF_ZERO
+rom[3] = 6;    // destination
 
-rom[5] = 6;    // INC_A
-rom[6] = 15;   // JUMP
-rom[7] = 5;    // stay here forever
+rom[4] = 15;   // JUMP
+rom[5] = 0;    // back to start
+
+rom[6] = 6;    // INC_A
+rom[7] = 15;   // JUMP
+rom[8] = 6;    // stay here
 
     SDL_Init(SDL_INIT_VIDEO);
 

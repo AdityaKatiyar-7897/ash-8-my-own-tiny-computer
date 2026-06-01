@@ -1,4 +1,5 @@
 #include <SDL.h>
+#include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -8,17 +9,29 @@
 
 typedef struct{
 	int x;
-	int y; //adding a new register to our cpu 
+	int y;
+	int a; //another new register (general purpose)
 	int pc;
 	bool halted;
 } CPU;
 
-void draw_line(uint8_t screen[], CPU *cpu)
+void video_step(uint8_t screen[], CPU *cpu)
 {
-	for(int i = 0; i < 20 ; i++){
-		screen[(12 + cpu->y) * COLS +cpu->x + i] = 'A';
+	int length = cpu->a;
+
+	if (length < 1){
+		length = 1;
 	}
-}
+
+	if (length > 20){
+		length = 20;
+	}
+
+	for (int i = 0; i < length; i++){
+		screen[(12 + cpu->y) * COLS + cpu->x + i] = 'A';
+	}
+	}
+
 
 
 void cpu_step(CPU *cpu, uint8_t rom[])
@@ -30,10 +43,12 @@ void cpu_step(CPU *cpu, uint8_t rom[])
     uint8_t instruction = rom[cpu->pc];
 
     if (instruction == 1) {
+        cpu->a++;
         cpu->x++;
     }
 
     if (instruction == 2) {
+        cpu->a--;
         cpu->x--;
     }
 
@@ -49,6 +64,14 @@ void cpu_step(CPU *cpu, uint8_t rom[])
         cpu->y--;
     }
 
+    if (instruction == 6) {
+    	cpu->a++;
+    }
+
+    if (instruction == 7){
+    	cpu->a--;
+    }
+
     if (instruction == 0) {
         cpu->halted = true;
     }
@@ -62,23 +85,12 @@ int main(void)
     uint8_t screen[COLS * ROWS] = {0};
     uint8_t rom[256] = {0};
 
-    for (int i = 0 ; i <10 ; i++){
-    	rom[i] = 1;
-    }
-
-    for (int i = 10; i < 20; i++){
-    	rom[i]  = 4; 
-     }
-
-     for (int i = 20; i < 30; i++){
-     	rom[i] = 2;
-     }
-
-     for (int i = 30; i < 40; i++){
-     	rom[i] = 5;
-     }
-
-    rom[40] = 3;
+    rom[0] = 6;
+    rom[1] = 6;
+    rom[2] = 6;
+    rom[3] = 7;
+    rom[4] = 7;
+    rom[5] = 3;
 
     
 
@@ -116,10 +128,24 @@ int main(void)
             screen[i] = 0;
         }
 
-        draw_line(screen, &cpu);
+        video_step(screen, &cpu);
         
 
         cpu_step(&cpu, rom);
+
+        char title[128];
+
+        snprintf(
+        	title,
+        	sizeof(title),
+        	"ASH-8  A=%d  X=%d  Y=%d  PC=%d",
+        	cpu.a,
+        	cpu.x,
+        	cpu.y,
+        	cpu.pc
+        );
+
+        SDL_SetWindowTitle(window, title);
 
         if (cpu.x > 20) {
             cpu.x = 0;

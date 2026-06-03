@@ -25,32 +25,23 @@ typedef struct{
 
 void video_step(uint8_t screen[], CPU *cpu, uint8_t ram[])
 {
-	int length = ram[0];
+    int ball_x = ram[1];
+    int ball_y = ram[2];
 
-	if (length < 1){
-		length = 1;
-	}
+    if (ball_x >= 0 && ball_x < COLS && ball_y >= 0 && ball_y < ROWS) {
+        screen[ball_y * COLS + ball_x] = 'A';
+    }
 
-	if (length > 20){
-		length = 20;
-	}
+    int paddle_y = ram[4];
 
-	for (int obj = 0; obj < 3; obj++){
-		int base = 1 + obj * 2;
+    for (int i = 0; i < 5; i++) {
+        int y = paddle_y + i;
 
-		int x = ram[base];
-		int y = ram[base + 1];
-
-		for (int i = 0; i < length; i++){
-			if (x + i >= 0 && x + i < COLS &&
-			    y >= 0 && y < ROWS)
-			{
-			    screen[y * COLS + x + i] = 'A';
-			}
-		}
-	}
-	}
-
+        if (y >= 0 && y < ROWS) {
+            screen[y * COLS + 2] = 'A';
+        }
+    }
+}
 
 
 void cpu_step(CPU *cpu, uint8_t rom[] , uint8_t ram[], Keyboard *keyboard)
@@ -239,108 +230,142 @@ int main(void)
 
     cpu.addr = 1;
 
-    // ====================
-    // DIRECTION CHECK
-    // ====================
+    ram[1] = 20;  // ball x
+    ram[2] = 12;  // ball y
     
-    rom[0]  = 23;
-    rom[1]  = 7;      // direction
+    ram[4] = 10;  // paddle y
     
-    rom[2]  = 9;      // LOAD direction
+    ram[7] = 0;   // ball dx: 0 left, 1 right
+    ram[8] = 1;   // ball dy: 0 up,   1 down
     
-    rom[3]  = 28;
-    rom[4]  = 1;      // direction == right ?
+    // INPUT
+    rom[0] = 12;
+    rom[1] = 28; rom[2] = 'w';
+    rom[3] = 16; rom[4] = 245;
+    rom[5] = 28; rom[6] = 's';
+    rom[7] = 16; rom[8] = 250;
+    rom[9] = 15; rom[10] = 30;
     
-    rom[5]  = 16;
-    rom[6]  = 50;     // move right
+    // X DIRECTION
+    rom[30] = 23; rom[31] = 7;
+    rom[32] = 9;
+    rom[33] = 28; rom[34] = 1;
+    rom[35] = 16; rom[36] = 150;
     
-    // ====================
     // MOVE LEFT
-    // ====================
+    rom[37] = 23; rom[38] = 1;
+    rom[39] = 9;
+    rom[40] = 28; rom[41] = 3;
+    rom[42] = 16; rom[43] = 100;
     
-    rom[7]  = 23;
-    rom[8]  = 1;      // x
+    rom[44] = 23; rom[45] = 1;
+    rom[46] = 9;
+    rom[47] = 17;
+    rom[48] = 16; rom[49] = 70;
     
-    rom[9]  = 9;      // LOAD x
+    rom[50] = 23; rom[51] = 1;
+    rom[52] = 27;
+    rom[53] = 15; rom[54] = 190;
     
-    rom[10] = 17;     // x == 0 ?
-    
-    rom[11] = 16;
-    rom[12] = 30;     // hit left wall
-    
-    rom[13] = 23;
-    rom[14] = 1;
-    
-    rom[15] = 27;     // X--
-    
-    rom[16] = 23;
-    rom[17] = 2;
-    
-    rom[18] = 27;     // Y--
-    
-    rom[19] = 15;
-    rom[20] = 0;
-    
-    // ====================
-    // HIT LEFT WALL
-    // ====================
-    
-    rom[30] = 23;
-    rom[31] = 7;
-    
-    rom[32] = 11;
-    rom[33] = 1;      // direction = right
-    
-    rom[34] = 8;
-    
-    rom[35] = 15;
-    rom[36] = 0;
-    
-    // ====================
-    // MOVE RIGHT
-    // ====================
-    
-    rom[50] = 23;
-    rom[51] = 1;      // x
-    
-    rom[52] = 9;      // LOAD x
-    
-    rom[53] = 29;     // INC_A
-    
-    rom[54] = 28;
-    rom[55] = 37;     // right wall
-    
-    rom[56] = 16;
-    rom[57] = 70;     // hit right wall
-    
-    rom[58] = 23;
-    rom[59] = 1;
-    
-    rom[60] = 26;     // X++
-    
-    rom[61] = 23;
-    rom[62] = 2;
-    
-    rom[63] = 26;     // Y++
-    
-    rom[64] = 15;
-    rom[65] = 0;
-    
-    // ====================
-    // HIT RIGHT WALL
-    // ====================
-    
-    rom[70] = 23;
-    rom[71] = 7;
-    
-    rom[72] = 11;
-    rom[73] = 0;      // direction = left
-    
+    // RESET IF MISSED
+    rom[70] = 23; rom[71] = 1;
+    rom[72] = 11; rom[73] = 20;
     rom[74] = 8;
     
-    rom[75] = 15;
-    rom[76] = 0;
+    rom[75] = 23; rom[76] = 2;
+    rom[77] = 11; rom[78] = 12;
+    rom[79] = 8;
     
+    rom[80] = 23; rom[81] = 7;
+    rom[82] = 11; rom[83] = 1;
+    rom[84] = 8;
+    
+    rom[85] = 15; rom[86] = 190;
+    
+    // PADDLE COLLISION CHECK
+    rom[100] = 23; rom[101] = 4;
+    rom[102] = 9;
+    rom[103] = 23; rom[104] = 2;
+    
+    rom[105] = 22; rom[106] = 16; rom[107] = 130;
+    rom[108] = 29; rom[109] = 22; rom[110] = 16; rom[111] = 130;
+    rom[112] = 29; rom[113] = 22; rom[114] = 16; rom[115] = 130;
+    rom[116] = 29; rom[117] = 22; rom[118] = 16; rom[119] = 130;
+    rom[120] = 29; rom[121] = 22; rom[122] = 16; rom[123] = 130;
+    
+    rom[124] = 15; rom[125] = 44;
+    
+    // HIT PADDLE
+    rom[130] = 23; rom[131] = 7;
+    rom[132] = 11; rom[133] = 1;
+    rom[134] = 8;
+    rom[135] = 15; rom[136] = 190;
+    
+    // MOVE RIGHT
+    rom[150] = 23; rom[151] = 1;
+    rom[152] = 9;
+    rom[153] = 29;
+    rom[154] = 28; rom[155] = 39;
+    rom[156] = 16; rom[157] = 170;
+    
+    rom[158] = 23; rom[159] = 1;
+    rom[160] = 26;
+    rom[161] = 15; rom[162] = 190;
+    
+    // HIT RIGHT WALL
+    rom[170] = 23; rom[171] = 7;
+    rom[172] = 11; rom[173] = 0;
+    rom[174] = 8;
+    rom[175] = 15; rom[176] = 190;
+    
+    // Y DIRECTION
+    rom[190] = 23; rom[191] = 8;
+    rom[192] = 9;
+    rom[193] = 28; rom[194] = 1;
+    rom[195] = 16; rom[196] = 220;
+    
+    // MOVE UP
+    rom[197] = 23; rom[198] = 2;
+    rom[199] = 9;
+    rom[200] = 17;
+    rom[201] = 16; rom[202] = 210;
+    
+    rom[203] = 23; rom[204] = 2;
+    rom[205] = 27;
+    rom[206] = 15; rom[207] = 0;
+    
+    // HIT TOP
+    rom[210] = 23; rom[211] = 8;
+    rom[212] = 11; rom[213] = 1;
+    rom[214] = 8;
+    rom[215] = 15; rom[216] = 0;
+    
+    // MOVE DOWN
+    rom[220] = 23; rom[221] = 2;
+    rom[222] = 9;
+    rom[223] = 29;
+    rom[224] = 28; rom[225] = 24;
+    rom[226] = 16; rom[227] = 235;
+    
+    rom[228] = 23; rom[229] = 2;
+    rom[230] = 26;
+    rom[231] = 15; rom[232] = 0;
+    
+    // HIT BOTTOM
+    rom[235] = 23; rom[236] = 8;
+    rom[237] = 11; rom[238] = 0;
+    rom[239] = 8;
+    rom[240] = 15; rom[241] = 0;
+    
+    // PADDLE UP
+    rom[245] = 23; rom[246] = 4;
+    rom[247] = 27;
+    rom[248] = 15; rom[249] = 30;
+    
+    // PADDLE DOWN
+    rom[250] = 23; rom[251] = 4;
+    rom[252] = 26;
+    rom[253] = 15; rom[254] = 30;
     bool running = true;
     SDL_Event e;
 
@@ -367,19 +392,22 @@ int main(void)
         video_step(screen, &cpu, ram);
         
 
-        cpu_step(&cpu, rom, ram, &keyboard);
+        for (int i = 0; i < 40; i++) {
+            cpu_step(&cpu, rom, ram, &keyboard);
+        }
 
         char title[128];
 
         snprintf(
             title,
             sizeof(title),
-            "A=%d RAM1=%d PC=%d ZERO=%d HALTED=%d",
-            cpu.a,
+            "BALL=(%d,%d) PADDLE=%d DX=%d DY=%d PC=%d",
             ram[1],
-            cpu.pc,
-            cpu.zero,
-            cpu.halted
+            ram[2],
+            ram[4],
+            ram[7],
+            ram[8],
+            cpu.pc
         );
         
         SDL_SetWindowTitle(window, title);

@@ -35,8 +35,15 @@ void video_step(uint8_t screen[], CPU *cpu, uint8_t ram[])
 		length = 20;
 	}
 
-	for (int i = 0; i < length; i++){
-		screen[(12 + ram[2]) * COLS + ram[1] + i] = 'A';
+	for (int obj = 0; obj < 2; obj++){
+		int base = 1 + obj * 2;
+
+		int x = ram[base];
+		int y = ram[base + 1];
+
+		for (int i = 0; i < length; i++){
+			screen[(12 + y) * COLS + x + i] = 'A';
+		}
 	}
 	}
 
@@ -190,9 +197,22 @@ rom[3] = 0;   // back to start
     cpu.a = 5;
 
     ram[0] = 10;
+
     ram[1] = 5;
     ram[2] = 5;
 
+    ram[3] = 20;
+    ram[4] = 10;
+
+    rom[0] = 1;   // X++
+    rom[1] = 18;  // STORE_X
+    
+    rom[2] = 4;   // Y++
+    rom[3] = 19;  // STORE_Y
+    
+    rom[4] = 15;  // JUMP
+    rom[5] = 0;
+    
     bool running = true;
     SDL_Event e;
 

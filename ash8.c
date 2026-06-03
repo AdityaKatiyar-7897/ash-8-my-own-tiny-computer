@@ -194,6 +194,10 @@ void cpu_step(CPU *cpu, uint8_t rom[] , uint8_t ram[], Keyboard *keyboard)
     	cpu->pc++;
     }
 
+    if (instruction == 29){
+    	cpu->a++;
+    }
+
     if (instruction == 0) {
         cpu->halted = true;
     }
@@ -235,7 +239,7 @@ int main(void)
 
     cpu.addr = 1;
 
-    ram[0] = 1;
+    ram[0] = 3;
 
     ram[1] = 5;
     ram[2] = 5;
@@ -247,39 +251,94 @@ int main(void)
     ram[6] = 5;
 
     ram[7] = 0;
-
-    rom[0]  = 23; // SET_ADDR
-    rom[1]  = 1;  // ball x
+rom[0]  = 23;
+    rom[1]  = 7;      // direction
     
-    rom[2]  = 9;  // LOAD x
+    rom[2]  = 9;      // LOAD direction
     
-    rom[3]  = 17; // ZERO = (A == 0)
+    rom[3]  = 28;
+    rom[4]  = 1;      // direction == 1 ?
     
-    rom[4]  = 16; // JUMP_IF_ZERO
-    rom[5]  = 20; // go change direction
+    rom[5]  = 16;
+    rom[6]  = 40;     // move right
     
-    // ----- normal move left -----
+    // ====================
+    // MOVE LEFT
+    // ====================
     
-    rom[6]  = 23; // SET_ADDR
-    rom[7]  = 1;
+    rom[7]  = 23;
+    rom[8]  = 1;      // x
     
-    rom[8]  = 27; // DEC_RAM
+    rom[9]  = 9;      // LOAD x
     
-    rom[9]  = 15; // JUMP
-    rom[10] = 0;
+    rom[10] = 17;     // x == 0 ?
     
-    // ----- hit wall -----
+    rom[11] = 16;
+    rom[12] = 20;     // hit left wall
     
-    rom[20] = 23; // SET_ADDR
-    rom[21] = 7;  // direction
+    rom[13] = 23;
+    rom[14] = 1;
     
-    rom[22] = 11; // LOAD_IMMEDIATE
-    rom[23] = 1;  // direction = right
+    rom[15] = 27;     // DEC_RAM
     
-    rom[24] = 8;  // STORE
+    rom[16] = 15;
+    rom[17] = 0;
     
-    rom[25] = 15; // JUMP
+    // ====================
+    // HIT LEFT WALL
+    // ====================
+    
+    rom[20] = 23;
+    rom[21] = 7;
+    
+    rom[22] = 11;
+    rom[23] = 1;      // direction = right
+    
+    rom[24] = 8;
+    
+    rom[25] = 15;
     rom[26] = 0;
+    
+    // ====================
+    // MOVE RIGHT
+    // ====================
+    
+    rom[40] = 23;
+    rom[41] = 1;      // x
+    
+    rom[42] = 9;      // LOAD x
+    
+    rom[43] = 29;     // INC_A
+    
+    rom[44] = 28;
+    rom[45] = 37;     // right wall
+    
+    rom[46] = 16;
+    rom[47] = 60;     // hit right wall
+    
+    rom[48] = 23;
+    rom[49] = 1;
+    
+    rom[50] = 26;     // INC_RAM
+    
+    rom[51] = 15;
+    rom[52] = 0;
+    
+    // ====================
+    // HIT RIGHT WALL
+    // ====================
+    
+    rom[60] = 23;
+    rom[61] = 7;
+    
+    rom[62] = 11;
+    rom[63] = 0;      // direction = left
+    
+    rom[64] = 8;
+    
+    rom[65] = 15;
+    rom[66] = 0;
+    
     bool running = true;
     SDL_Event e;
 

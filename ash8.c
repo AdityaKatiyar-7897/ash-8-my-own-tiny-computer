@@ -107,6 +107,11 @@ void cpu_step(CPU *cpu, uint8_t rom[] , uint8_t ram[], Keyboard *keyboard)
     	cpu ->addr++;
     }
 
+    if(instruction == 11){
+    	cpu->a = rom[cpu->pc + 1];
+    	cpu->pc++;
+    }
+
     if (instruction == 12){
     	cpu->a = keyboard->key;
     }
@@ -140,9 +145,11 @@ void cpu_step(CPU *cpu, uint8_t rom[] , uint8_t ram[], Keyboard *keyboard)
     }
 
     if (instruction == 16){
-    	if (cpu->zero){
-    		cpu->pc = rom[cpu->pc +1] -1;
-    	}
+        if (cpu->zero){
+            cpu->pc = rom[cpu->pc + 1] - 1;
+        } else {
+            cpu->pc++;
+        }
     }
 
     if (instruction == 17){
@@ -155,6 +162,27 @@ void cpu_step(CPU *cpu, uint8_t rom[] , uint8_t ram[], Keyboard *keyboard)
 
     if (instruction == 19){
     	ram[2] = cpu->y;
+    }
+
+    if (instruction == 22){
+    	cpu->zero = (cpu->a == ram[cpu->addr]);
+    }
+
+    if (instruction == 23){
+        cpu->addr = rom[cpu->pc + 1];
+        cpu->pc++;
+    }
+
+    if (instruction == 24){
+    	cpu->a--;
+    }
+
+    if (instruction == 25){
+    	cpu->halted = true;
+    }
+
+    if(instruction == 26){
+        ram[cpu->addr]++;
     }
 
     if (instruction == 0) {
@@ -174,11 +202,7 @@ int main(void)
     uint8_t ram[256] = {0};
     Keyboard keyboard = {0};
 
-rom[0] = 1;   // X++
-rom[1] = 18;  // RAM[1] = X
 
-rom[2] = 15;  // JUMP
-rom[3] = 0;   // back to start
 
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -202,7 +226,7 @@ rom[3] = 0;   // back to start
 
     cpu.addr = 1;
 
-    ram[0] = 10;
+    ram[0] = 1;
 
     ram[1] = 5;
     ram[2] = 5;
@@ -213,8 +237,14 @@ rom[3] = 0;   // back to start
     ram[5] = 25;
     ram[6] = 5;
 
-    rom[0] = 15;
-    rom[1] = 0;
+    rom[0] = 23; // SET_ADDR
+    rom[1] = 1;  // RAM[1]
+    
+    rom[2] = 26; // INC_RAM
+    
+    rom[3] = 15; // JUMP
+    rom[4] = 0;
+    
     bool running = true;
     SDL_Event e;
 
@@ -243,34 +273,19 @@ rom[3] = 0;   // back to start
 
         cpu_step(&cpu, rom, ram, &keyboard);
 
-        if (keyboard.key == 'a' && ram[1] > 0)
-            ram[1]--;
-        
-        if (keyboard.key == 'd' && ram[1] < COLS - ram[0])
-            ram[1]++;
-        
-        if (keyboard.key == 'w' && ram[2] > 0)
-            ram[2]--;
-        
-        if (keyboard.key == 's' && ram[2] < ROWS - 1)
-            ram[2]++;
-
         char title[128];
 
         snprintf(
-        	title,
-        	sizeof(title),
-        	"ASH-8  KEY=%d  A=%d  ADDR=%d  RAM[ADDR]=%d  X=%d  Y=%d  PC=%d , ZERO=%d",
-        	keyboard.key,
-        	cpu.a,
-        	cpu.addr,
-        	ram[cpu.addr],
-        	cpu.x,
-        	cpu.y,
-        	cpu.pc,
-        	cpu.zero
+            title,
+            sizeof(title),
+            "A=%d RAM1=%d PC=%d ZERO=%d HALTED=%d",
+            cpu.a,
+            ram[1],
+            cpu.pc,
+            cpu.zero,
+            cpu.halted
         );
-
+        
         SDL_SetWindowTitle(window, title);
 
         if (cpu.x > 20) {

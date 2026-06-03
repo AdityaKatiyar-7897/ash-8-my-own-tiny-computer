@@ -185,6 +185,15 @@ void cpu_step(CPU *cpu, uint8_t rom[] , uint8_t ram[], Keyboard *keyboard)
         ram[cpu->addr]++;
     }
 
+    if (instruction == 27){
+    	ram[cpu->addr]--;
+    }
+
+    if (instruction == 28){ // instruction to comopare wiht the immediate
+    	cpu->zero = (cpu->a == rom[cpu->pc + 1]);
+    	cpu->pc++;
+    }
+
     if (instruction == 0) {
         cpu->halted = true;
     }
@@ -237,14 +246,34 @@ int main(void)
     ram[5] = 25;
     ram[6] = 5;
 
-    rom[0] = 23; // SET_ADDR
-    rom[1] = 1;  // RAM[1]
+    rom[0]  = 23; // SET_ADDR
+    rom[1]  = 7;  // direction
     
-    rom[2] = 26; // INC_RAM
+    rom[2]  = 9;  // LOAD direction into A
     
-    rom[3] = 15; // JUMP
-    rom[4] = 0;
+    rom[3]  = 28; // COMPARE A WITH IMMEDIATE
+    rom[4]  = 1;  // compare with 1
     
+    rom[5]  = 16; // JUMP_IF_ZERO
+    rom[6]  = 12; // go move right
+    
+    // move left
+    rom[7]  = 23; // SET_ADDR
+    rom[8]  = 1;  // ball x
+    
+    rom[9]  = 27; // DEC_RAM
+    
+    rom[10] = 15; // JUMP
+    rom[11] = 0;
+    
+    // move right
+    rom[12] = 23; // SET_ADDR
+    rom[13] = 1;  // ball x
+    
+    rom[14] = 26; // INC_RAM
+    
+    rom[15] = 15; // JUMP
+    rom[16] = 0;
     bool running = true;
     SDL_Event e;
 

@@ -239,28 +239,20 @@ int main(void)
 
     cpu.addr = 1;
 
-    ram[0] = 3;
-
-    ram[1] = 5;
-    ram[2] = 5;
-
-    ram[3] = 20;
-    ram[4] = 10;
-
-    ram[5] = 25;
-    ram[6] = 5;
-
-    ram[7] = 0;
-rom[0]  = 23;
+    // ====================
+    // DIRECTION CHECK
+    // ====================
+    
+    rom[0]  = 23;
     rom[1]  = 7;      // direction
     
     rom[2]  = 9;      // LOAD direction
     
     rom[3]  = 28;
-    rom[4]  = 1;      // direction == 1 ?
+    rom[4]  = 1;      // direction == right ?
     
     rom[5]  = 16;
-    rom[6]  = 40;     // move right
+    rom[6]  = 50;     // move right
     
     // ====================
     // MOVE LEFT
@@ -274,70 +266,80 @@ rom[0]  = 23;
     rom[10] = 17;     // x == 0 ?
     
     rom[11] = 16;
-    rom[12] = 20;     // hit left wall
+    rom[12] = 30;     // hit left wall
     
     rom[13] = 23;
     rom[14] = 1;
     
-    rom[15] = 27;     // DEC_RAM
+    rom[15] = 27;     // X--
     
-    rom[16] = 15;
-    rom[17] = 0;
+    rom[16] = 23;
+    rom[17] = 2;
+    
+    rom[18] = 27;     // Y--
+    
+    rom[19] = 15;
+    rom[20] = 0;
     
     // ====================
     // HIT LEFT WALL
     // ====================
     
-    rom[20] = 23;
-    rom[21] = 7;
+    rom[30] = 23;
+    rom[31] = 7;
     
-    rom[22] = 11;
-    rom[23] = 1;      // direction = right
+    rom[32] = 11;
+    rom[33] = 1;      // direction = right
     
-    rom[24] = 8;
+    rom[34] = 8;
     
-    rom[25] = 15;
-    rom[26] = 0;
+    rom[35] = 15;
+    rom[36] = 0;
     
     // ====================
     // MOVE RIGHT
     // ====================
     
-    rom[40] = 23;
-    rom[41] = 1;      // x
+    rom[50] = 23;
+    rom[51] = 1;      // x
     
-    rom[42] = 9;      // LOAD x
+    rom[52] = 9;      // LOAD x
     
-    rom[43] = 29;     // INC_A
+    rom[53] = 29;     // INC_A
     
-    rom[44] = 28;
-    rom[45] = 37;     // right wall
+    rom[54] = 28;
+    rom[55] = 37;     // right wall
     
-    rom[46] = 16;
-    rom[47] = 60;     // hit right wall
+    rom[56] = 16;
+    rom[57] = 70;     // hit right wall
     
-    rom[48] = 23;
-    rom[49] = 1;
+    rom[58] = 23;
+    rom[59] = 1;
     
-    rom[50] = 26;     // INC_RAM
+    rom[60] = 26;     // X++
     
-    rom[51] = 15;
-    rom[52] = 0;
+    rom[61] = 23;
+    rom[62] = 2;
+    
+    rom[63] = 26;     // Y++
+    
+    rom[64] = 15;
+    rom[65] = 0;
     
     // ====================
     // HIT RIGHT WALL
     // ====================
     
-    rom[60] = 23;
-    rom[61] = 7;
+    rom[70] = 23;
+    rom[71] = 7;
     
-    rom[62] = 11;
-    rom[63] = 0;      // direction = left
+    rom[72] = 11;
+    rom[73] = 0;      // direction = left
     
-    rom[64] = 8;
+    rom[74] = 8;
     
-    rom[65] = 15;
-    rom[66] = 0;
+    rom[75] = 15;
+    rom[76] = 0;
     
     bool running = true;
     SDL_Event e;

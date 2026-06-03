@@ -35,14 +35,18 @@ void video_step(uint8_t screen[], CPU *cpu, uint8_t ram[])
 		length = 20;
 	}
 
-	for (int obj = 0; obj < 2; obj++){
+	for (int obj = 0; obj < 3; obj++){
 		int base = 1 + obj * 2;
 
 		int x = ram[base];
 		int y = ram[base + 1];
 
 		for (int i = 0; i < length; i++){
-			screen[(12 + y) * COLS + x + i] = 'A';
+			if (x + i >= 0 && x + i < COLS &&
+			    y >= 0 && y < ROWS)
+			{
+			    screen[y * COLS + x + i] = 'A';
+			}
 		}
 	}
 	}
@@ -196,6 +200,8 @@ rom[3] = 0;   // back to start
     CPU cpu = {0};
     cpu.a = 5;
 
+    cpu.addr = 1;
+
     ram[0] = 10;
 
     ram[1] = 5;
@@ -204,15 +210,11 @@ rom[3] = 0;   // back to start
     ram[3] = 20;
     ram[4] = 10;
 
-    rom[0] = 1;   // X++
-    rom[1] = 18;  // STORE_X
-    
-    rom[2] = 4;   // Y++
-    rom[3] = 19;  // STORE_Y
-    
-    rom[4] = 15;  // JUMP
-    rom[5] = 0;
-    
+    ram[5] = 25;
+    ram[6] = 5;
+
+    rom[0] = 15;
+    rom[1] = 0;
     bool running = true;
     SDL_Event e;
 
@@ -240,6 +242,18 @@ rom[3] = 0;   // back to start
         
 
         cpu_step(&cpu, rom, ram, &keyboard);
+
+        if (keyboard.key == 'a' && ram[1] > 0)
+            ram[1]--;
+        
+        if (keyboard.key == 'd' && ram[1] < COLS - ram[0])
+            ram[1]++;
+        
+        if (keyboard.key == 'w' && ram[2] > 0)
+            ram[2]--;
+        
+        if (keyboard.key == 's' && ram[2] < ROWS - 1)
+            ram[2]++;
 
         char title[128];
 

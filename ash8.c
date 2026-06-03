@@ -246,34 +246,40 @@ int main(void)
     ram[5] = 25;
     ram[6] = 5;
 
+    ram[7] = 0;
+
     rom[0]  = 23; // SET_ADDR
-    rom[1]  = 7;  // direction
+    rom[1]  = 1;  // ball x
     
-    rom[2]  = 9;  // LOAD direction into A
+    rom[2]  = 9;  // LOAD x
     
-    rom[3]  = 28; // COMPARE A WITH IMMEDIATE
-    rom[4]  = 1;  // compare with 1
+    rom[3]  = 17; // ZERO = (A == 0)
     
-    rom[5]  = 16; // JUMP_IF_ZERO
-    rom[6]  = 12; // go move right
+    rom[4]  = 16; // JUMP_IF_ZERO
+    rom[5]  = 20; // go change direction
     
-    // move left
-    rom[7]  = 23; // SET_ADDR
-    rom[8]  = 1;  // ball x
+    // ----- normal move left -----
     
-    rom[9]  = 27; // DEC_RAM
+    rom[6]  = 23; // SET_ADDR
+    rom[7]  = 1;
     
-    rom[10] = 15; // JUMP
-    rom[11] = 0;
+    rom[8]  = 27; // DEC_RAM
     
-    // move right
-    rom[12] = 23; // SET_ADDR
-    rom[13] = 1;  // ball x
+    rom[9]  = 15; // JUMP
+    rom[10] = 0;
     
-    rom[14] = 26; // INC_RAM
+    // ----- hit wall -----
     
-    rom[15] = 15; // JUMP
-    rom[16] = 0;
+    rom[20] = 23; // SET_ADDR
+    rom[21] = 7;  // direction
+    
+    rom[22] = 11; // LOAD_IMMEDIATE
+    rom[23] = 1;  // direction = right
+    
+    rom[24] = 8;  // STORE
+    
+    rom[25] = 15; // JUMP
+    rom[26] = 0;
     bool running = true;
     SDL_Event e;
 
